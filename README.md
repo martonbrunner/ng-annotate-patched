@@ -17,6 +17,8 @@ This fork contains the following changes:
 - Added a `acornOptions` option to the API, to allow overriding or passing
   extra options to acorn.
 
+- Published to npm under the name `ng-annotate-patched`.
+
 All work is done on the `fork` branch. The `master` branch corresponds to
 the `ng-annotate` commit the fork is based on.
 
