@@ -1,4 +1,27 @@
-# ng-annotate [![Build Status](https://travis-ci.org/olov/ng-annotate.svg?branch=master)](https://travis-ci.org/olov/ng-annotate)
+# Fork details
+
+ng-annotate-patched is a fork of [ng-annotate](https://github.com/olov/ng-annotate).
+ng-annotate is [no longer maintained](https://github.com/olov/ng-annotate/issues/245),
+and hence fails when applied to source code containing modern JavaScript
+constructs, like `import` and `export`.
+
+This fork contains the following changes:
+
+- Renamed package and binary from `ng-annotate` to `ng-annotate-patched`.
+
+- Updated the [acorn](https://github.com/ternjs/acorn) JavaScript parser.
+
+- Enabled some acorn options that allow it to parse a wider range of
+  JavaScript.
+
+- Added a `acornOptions` option to the API, to allow overriding or passing
+  extra options to acorn.
+
+All work is done on the `fork` branch. The `master` branch corresponds to
+the `ng-annotate` commit the fork is based on.
+
+# Original README
+
 ng-annotate adds and removes AngularJS dependency injection annotations.
 
 Write your code without annotations and mark-up functions to be annotated 

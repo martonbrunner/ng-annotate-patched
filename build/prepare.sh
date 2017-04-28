@@ -2,10 +2,10 @@
 cd ..
 rm -rf build/npm
 mkdir build/npm
-git archive master -o build/npm/ng-annotate.tar --prefix=ng-annotate/
+git archive fork -o build/npm/ng-annotate-patched.tar --prefix=ng-annotate-patched/
 cd build/npm
-tar xf ng-annotate.tar && rm ng-annotate.tar
-cd ng-annotate/build
+tar xf ng-annotate-patched.tar && rm ng-annotate-patched.tar
+cd ng-annotate-patched/build
 ./build.sh
 # delete build scripts
 rm *.sh *.js defs-config.json ng-annotate
@@ -14,4 +14,4 @@ rm ../.gitignore
 # delete large test artifacts
 rm ../tests/angular.js ../build/es5/tests/angular.js
 cd ../..
-tar czf ng-annotate.tgz ng-annotate && rm -rf ng-annotate
+tar czf ng-annotate-patched.tgz ng-annotate-patched && rm -rf ng-annotate-patched
