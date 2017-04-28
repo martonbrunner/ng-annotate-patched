@@ -1025,3 +1025,9 @@ export default function exportDefaultFunction($scope) {}
 
 /* @ngInject */
 export function exportFunction($scope) {}
+
+/* @ngInject */
+export var exportVariableFunctionVar = function exportVariableFunctionFunc($scope) {}
+
+/* @ngInject */
+export var exportVariableFunctionVar2 = function($scope) {}

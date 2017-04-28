@@ -770,6 +770,15 @@ function firstNonPrologueStatement(body) {
 }
 
 function judgeInjectArraySuspect(node, ctx) {
+    // onode is a top-level node (inside function block), later verified
+    // node is inner match, descent in multiple steps
+    let onode = null;
+
+    if (is.someof(node.type, ["ExportDefaultDeclaration", "ExportNamedDeclaration"])) {
+        onode = node;
+        node = node.declaration;
+    }
+
     if (node.type === "VariableDeclaration") {
         // suspect can only be a VariableDeclaration (statement) in case of
         // explicitly marked via /*@ngInject*/, not via references because
@@ -787,18 +796,14 @@ function judgeInjectArraySuspect(node, ctx) {
         node = node.declarations[0];
     }
 
-    // onode is a top-level node (inside function block), later verified
-    // node is inner match, descent in multiple steps
-    let onode = null;
     let declaratorName = null;
     if (node.type === "VariableDeclarator") {
-        onode = node.$parent;
+        if (onode === null) {
+            onode = node.$parent;
+        }
         declaratorName = node.id.name;
         node = node.init; // var foo = ___;
-    } else if (is.someof(node.type, ["ExportDefaultDeclaration", "ExportNamedDeclaration"])) {
-        onode = node;
-        node = node.declaration;
-    } else {
+    } else if (onode === null) {
         onode = node;
     }
 

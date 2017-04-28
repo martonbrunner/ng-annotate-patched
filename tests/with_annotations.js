@@ -1070,3 +1070,11 @@ exportDefaultFunction.$inject = ["$scope"];
 /* @ngInject */
 export function exportFunction($scope) {}
 exportFunction.$inject = ["$scope"];
+
+/* @ngInject */
+export var exportVariableFunctionVar = function exportVariableFunctionFunc($scope) {}
+exportVariableFunctionVar.$inject = ["$scope"];
+
+/* @ngInject */
+export var exportVariableFunctionVar2 = function($scope) {}
+exportVariableFunctionVar2.$inject = ["$scope"];
