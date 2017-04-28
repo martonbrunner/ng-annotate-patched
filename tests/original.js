@@ -1031,3 +1031,7 @@ export var exportVariableFunctionVar = function exportVariableFunctionFunc($scop
 
 /* @ngInject */
 export var exportVariableFunctionVar2 = function($scope) {}
+
+export var exportVariableFunctionVar3 = function($scope) {
+    "ngInject";
+}

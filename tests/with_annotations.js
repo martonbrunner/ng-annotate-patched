@@ -1078,3 +1078,8 @@ exportVariableFunctionVar.$inject = ["$scope"];
 /* @ngInject */
 export var exportVariableFunctionVar2 = function($scope) {}
 exportVariableFunctionVar2.$inject = ["$scope"];
+
+export var exportVariableFunctionVar3 = function($scope) {
+    "ngInject";
+}
+exportVariableFunctionVar3.$inject = ["$scope"];

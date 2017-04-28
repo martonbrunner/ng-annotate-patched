@@ -807,6 +807,11 @@ function judgeInjectArraySuspect(node, ctx) {
         onode = node;
     }
 
+    if (onode.$parent && is.someof(onode.$parent.type, ["ExportDefaultDeclaration", "ExportNamedDeclaration"])) {
+        // export var x = function($scope) { "ngInject"; }
+        onode = onode.$parent;
+    }
+
     // suspect must be inside of a block or at the top-level (i.e. inside of node.$parent.body[])
     if (!node || !onode.$parent || is.noneof(onode.$parent.type, ["Program", "BlockStatement"])) {
         return;
