@@ -5,7 +5,7 @@
 "use strict";
 
 const assert = require("assert");
-const traverse = require("ordered-ast-traverse");
+const traverse = require("./traverse");
 const Scope = require("./scope");
 const is = require("simple-is");
 
