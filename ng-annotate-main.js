@@ -407,6 +407,21 @@ function last(arr) {
     return arr[arr.length - 1];
 }
 
+function objectAssign(target, varArgs) {
+    const to = Object(target);
+    for (let index = 1; index < arguments.length; index++) {
+        const nextSource = arguments[index];
+        if (nextSource != null) {
+            for (let nextKey in nextSource) {
+                if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                    to[nextKey] = nextSource[nextKey];
+                }
+            }
+        }
+    }
+    return to;
+}
+
 function matchProp(name, props) {
     for (let i = 0; i < props.length; i++) {
         const prop = props[i];
@@ -1074,14 +1089,14 @@ module.exports = function ngAnnotate(src, options) {
         stats.parser_require_t1 = require_acorn_t1;
         stats.parser_parse_t0 = Date.now();
         // acorn
-        ast = parser(src, {
+        ast = parser(src, objectAssign({
             ecmaVersion: 8,
             allowImportExportEverywhere: true,
             allowReturnOutsideFunction: true,
             locations: true,
             ranges: true,
             onComment: comments,
-        });
+        }, options.acornOptions));
         stats.parser_parse_t1 = Date.now();
     } catch(e) {
         return {
