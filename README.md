@@ -17,6 +17,9 @@ This fork contains the following changes:
 - Added a `acornOptions` option to the API, to allow overriding or passing
   extra options to acorn.
 
+- Added support for ngInject comments on `export [default] function functionName() {...}`
+  declarations.
+
 - Published to npm under the name `ng-annotate-patched`.
 
 All work is done on the `fork` branch. The `master` branch corresponds to

@@ -795,6 +795,9 @@ function judgeInjectArraySuspect(node, ctx) {
         onode = node.$parent;
         declaratorName = node.id.name;
         node = node.init; // var foo = ___;
+    } else if (is.someof(node.type, ["ExportDefaultDeclaration", "ExportNamedDeclaration"])) {
+        onode = node;
+        node = node.declaration;
     } else {
         onode = node;
     }
@@ -1023,7 +1026,9 @@ function isFunctionExpressionWithArgs(node) {
     return node.type === "FunctionExpression" && node.params.length >= 1;
 }
 function isFunctionDeclarationWithArgs(node) {
-    return node.type === "FunctionDeclaration" && node.params.length >= 1;
+    // For `export default function() {...}`, `id` is null, which means
+    // we cannot inject it. So ignore that.
+    return node.type === "FunctionDeclaration" && node.params.length >= 1 && node.id !== null;
 }
 function isGenericProviderName(node) {
     return node.type === "Literal" && is.string(node.value);

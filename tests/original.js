@@ -1019,3 +1019,9 @@ myMod.service("a", MyCtrl);
 
 import "foo";
 export const bar = "";
+
+/* @ngInject */
+export default function exportDefaultFunction($scope) {}
+
+/* @ngInject */
+export function exportFunction($scope) {}
