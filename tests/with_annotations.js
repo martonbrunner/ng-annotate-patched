@@ -1059,3 +1059,6 @@ var MyCtrl = (function() {
 })();
 
 myMod.service("a", MyCtrl);
+
+import "foo";
+export const bar = "";
