@@ -1,3 +1,6 @@
+## v1.6.0 2017-05-28
+ * Switch from tilde ~ dependencies to ^ caret dependencies.
+
 ## v1.5.0 2017-04-29
  * Support `export var varName = function($scope) { "ngInject"; }`.
  * Support `/* @ngInject */ export [default] var varName = function [functionName]() {...}`.

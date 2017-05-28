@@ -8,23 +8,23 @@
     "url": "https://github.com/bluetech/ng-annotate-patched.git"
   },
   "dependencies": {
-    "acorn": "~5.0.3",
-    "alter": "~0.2.0",
-    "convert-source-map": "~1.1.2",
-    "optimist": "~0.6.1",
-    "simple-fmt": "~0.1.0",
-    "simple-is": "~0.2.0",
-    "source-map": "~0.5.3",
-    "stable": "~0.1.5",
-    "stringmap": "~0.2.2",
-    "stringset": "~0.2.1",
-    "tryor": "~0.1.2"
+    "acorn": "^5.0.3",
+    "alter": "^0.2.0",
+    "convert-source-map": "^1.1.2",
+    "optimist": "^0.6.1",
+    "simple-fmt": "^0.1.0",
+    "simple-is": "^0.2.0",
+    "source-map": "^0.5.3",
+    "stable": "^0.1.5",
+    "stringmap": "^0.2.2",
+    "stringset": "^0.2.1",
+    "tryor": "^0.1.2"
   },
   "devDependencies": {
-    "coffee-script": "~1.10.0",
-    "defs": "~1.1.1",
-    "diff": "~2.2.1",
-    "find-line-column": "~0.5.2"
+    "coffee-script": "^1.10.0",
+    "defs": "^1.1.1",
+    "diff": "^2.2.1",
+    "find-line-column": "^0.5.2"
   },
   "keywords": [
     "angular",

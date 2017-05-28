@@ -163,25 +163,6 @@ function run(ngAnnotate) {
     test(adf, ngAnnotate(adfAnnotated, {remove: true, plugin: [ngAnnotateAdfPlugin]}).src, "optionals/angular-dashboard-framework.js");
 
 
-    if (fs.existsSync("package.json")) {
-        console.log("testing package.json")
-        try {
-            const json = JSON.parse(slurp("package.json"));
-            const substr = JSON.stringify({
-                dependencies: json.dependencies,
-                devDependencies: json.devDependencies,
-            }, null, 4);
-            if (/\^/g.test(substr)) {
-                console.error("package.json error: shouldn't use the ^ operator");
-                console.error(substr);
-                process.exit(-1);
-            }
-        } catch (e) {
-            console.error("package.json error: invalid json");
-            process.exit(-1);
-        }
-    }
-
     if (fs.existsSync("tests/angular.js")) {
         console.log("testing performance");
         const ng1 = String(fs.readFileSync("tests/angular.js"));
