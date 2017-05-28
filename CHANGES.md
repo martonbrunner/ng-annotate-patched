@@ -1,3 +1,19 @@
+## v1.5.0 2017-04-29
+ * Support `export var varName = function($scope) { "ngInject"; }`.
+ * Support `/* @ngInject */ export [default] var varName = function [functionName]() {...}`.
+
+## v1.4.0 2017-04-28
+ * Support ngInject on `export [default] function functionName() {...}`.
+
+## v1.3.0 2017-04-28
+ * Initial version of the fork.
+ * Renamed package and binary from `ng-annotate` to `ng-annotate-patched`.
+ * Updated the [acorn](https://github.com/ternjs/acorn) JavaScript parser.
+ * Enabled some acorn options that allow it to parse a wider range of
+   JavaScript.
+ * Added a `acornOptions` option to the API, to allow overriding or passing
+   extra options to acorn.
+
 ## v1.2.1 2016-01-10
  * bugfix case where $inject arrays were incorrectly hoisted
  * angular-dashboard-framework optional: match apply
