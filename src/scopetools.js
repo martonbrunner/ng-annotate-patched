@@ -34,8 +34,21 @@ function createScopes(node, parent) {
     } else if (node.type === "VariableDeclaration") {
         // Variable declarations names goes in current scope
         node.declarations.forEach(function(declarator) {
-            const name = declarator.id.name;
-            node.$scope.add(name, node.kind, declarator.id, declarator.range[1]);
+            const pattern = declarator.id;
+            if (pattern.type === "Identifier") {
+                const name = declarator.id.name;
+                node.$scope.add(name, node.kind, declarator.id, declarator.range[1]);
+            } else if (pattern.type === "ObjectPattern") {
+                assert(false, 'ng-annotate-patched does not support object destructuring')
+            } else if (pattern.type === "ArrayPattern") {
+                assert(false, 'ng-annotate-patched does not support array destructuring')
+            } else if (pattern.type === "RestElements") {
+                assert(false, 'ng-annotate-patched does not support rest element destructuring')
+            } else if (pattern.type === "AssignmentPattern") {
+                assert(false, 'ng-annotate-patched does not support assignment pattern destructuring')
+            } else {
+                assert(false);
+            }
         });
 
     } else if (isFunction(node)) {
