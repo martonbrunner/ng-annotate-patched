@@ -2,7 +2,7 @@
   "name": "ng-annotate-patched",
   "version": "1.6.0",
   "description": "add, remove and rebuild angularjs dependency injection annotations",
-  "main": "ng-annotate-main.js",
+  "main": "src/ng-annotate-main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/bluetech/ng-annotate-patched.git"
@@ -37,7 +37,7 @@
     "transformation"
   ],
   "scripts": {
-    "test": "node run-tests"
+    "test": "node tests/run-tests"
   },
   "bin": "./ng-annotate",
   "author": "Olov Lassus <olov.lassus@gmail.com>",

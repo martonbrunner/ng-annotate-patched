@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require("./ng-annotate.js");
+require("./src/ng-annotate.js");
