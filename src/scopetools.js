@@ -39,13 +39,13 @@ function createScopes(node, parent) {
                 const name = declarator.id.name;
                 node.$scope.add(name, node.kind, declarator.id, declarator.range[1]);
             } else if (pattern.type === "ObjectPattern") {
-                assert(false, 'ng-annotate-patched does not support object destructuring')
+                // Unhandled.
             } else if (pattern.type === "ArrayPattern") {
-                assert(false, 'ng-annotate-patched does not support array destructuring')
-            } else if (pattern.type === "RestElements") {
-                assert(false, 'ng-annotate-patched does not support rest element destructuring')
+                // Unhandled.
+            } else if (pattern.type === "RestElement") {
+                // Unhandled.
             } else if (pattern.type === "AssignmentPattern") {
-                assert(false, 'ng-annotate-patched does not support assignment pattern destructuring')
+                // Unhandled.
             } else {
                 assert(false);
             }
@@ -74,8 +74,21 @@ function createScopes(node, parent) {
             }
         }
 
-        node.params.forEach(function(param) {
-            node.$scope.add(param.name, "param", param, null);
+        node.params.forEach(pattern => {
+            if (pattern.type === "Identifier") {
+                node.$scope.add(pattern.name, "param", pattern.name, null);
+            } else if (pattern.type === "ObjectPattern") {
+                // Unhandled.
+            } else if (pattern.type === "ArrayPattern") {
+                // Unhandled.
+            } else if (pattern.type === "RestElement") {
+                // Unhandled.
+            } else if (pattern.type === "AssignmentPattern") {
+                // Unhandled.
+            } else {
+                console.log(pattern.type);
+                assert(false);
+            }
         });
 
     } else if (isForWithConstLet(node) || isForInOfWithConstLet(node)) {
