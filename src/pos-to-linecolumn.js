@@ -6,65 +6,61 @@
 
 const assert = require("assert");
 
-module.exports = PosToLineColumn;
+module.exports = class PosToLineColumn {
+    constructor(str) {
+        str = String(str);
 
-function PosToLineColumn(str) {
-    if (!(this instanceof PosToLineColumn)) {
-        throw new Error("PosToLineColumn requires new");
-    }
-    str = String(str);
+        const newlines = [];
+        let pos = -1;
+        while ((pos = str.indexOf("\n", pos + 1)) >= 0) {
+            newlines.push(pos);
+        }
 
-    const newlines = [];
-    let pos = -1;
-    while ((pos = str.indexOf("\n", pos + 1)) >= 0) {
-        newlines.push(pos);
-    }
+        let line = 1;
+        let column = 0;
+        const columns = [];
+        const lines = [];
+        let i;
+        let j = 0;
+        for (i = 0; i < str.length; i++) {
+            columns[i] = column;
+            lines[i] = line;
 
-    let line = 1;
-    let column = 0;
-    const columns = [];
-    const lines = [];
-    let i;
-    let j = 0;
-    for (i = 0; i < str.length; i++) {
+            if (i === newlines[j]) {
+                ++j;
+                ++line;
+                column = 0;
+            } else {
+                ++column;
+            }
+        }
+
+        // add extra entry to support pos === str.length
         columns[i] = column;
         lines[i] = line;
 
-        if (i === newlines[j]) {
-            ++j;
-            ++line;
-            column = 0;
-        } else {
-            ++column;
-        }
+        this.len = str.length;
+        this.columns = columns;
+        this.lines = lines;
     }
 
-    // add extra entry to support pos === str.length
-    columns[i] = column;
-    lines[i] = line;
+    toLine(pos) {
+        assert(pos >= 0 && pos <= this.len);
+        return this.lines[pos];
+    }
 
-    this.len = str.length;
-    this.columns = columns;
-    this.lines = lines;
-}
+    toColumn(pos) {
+        assert(pos >= 0 && pos <= this.len);
+        return this.columns[pos];
+    }
 
-PosToLineColumn.prototype.toLine = function(pos) {
-    assert(pos >= 0 && pos <= this.len);
-    return this.lines[pos];
+    toLineColumn(pos) {
+        return {
+            line: this.toLine(pos),
+            column: this.toColumn(pos),
+        };
+    }
 };
-
-PosToLineColumn.prototype.toColumn = function(pos) {
-    assert(pos >= 0 && pos <= this.len);
-    return this.columns[pos];
-};
-
-PosToLineColumn.prototype.toLineColumn = function(pos) {
-    return {
-        line: this.toLine(pos),
-        column: this.toColumn(pos),
-    };
-};
-
 
 /*
 const tst = "asdf\n" +
