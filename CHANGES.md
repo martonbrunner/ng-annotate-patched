@@ -1,3 +1,6 @@
+## UNRELEASED
+ * Require node>=4.0.0.
+
 ## v1.6.0 2017-05-28
  * Switch from tilde ~ dependencies to ^ caret dependencies.
 
