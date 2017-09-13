@@ -19,8 +19,6 @@ class SourceMapper {
     }
 
     calculateMappings() {
-        const self = this;
-
         // These offsets represent the difference in coordinates between a node in the source
         // and the corresponding position in the output.
         let lineOffset = 0;
@@ -33,15 +31,15 @@ class SourceMapper {
         let frag = 0;
         let pos = 0;
 
-        while (pos < self.nodePositions.length) {
-            while (frag < self.fragments.length &&
-                compareLoc(self.fragments[frag].loc.start, self.nodePositions[pos]) < 1) {
+        while (pos < this.nodePositions.length) {
+            while (frag < this.fragments.length &&
+                compareLoc(this.fragments[frag].loc.start, this.nodePositions[pos]) < 1) {
 
-                const fragmentLines = self.fragments[frag].str.split("\n");
+                const fragmentLines = this.fragments[frag].str.split("\n");
                 const addedNewlines = fragmentLines.length - 1;
 
-                const replacedLines = self.fragments[frag].loc.end.line - self.fragments[frag].loc.start.line;
-                const replacedColumns = self.fragments[frag].loc.end.column - self.fragments[frag].loc.start.column;
+                const replacedLines = this.fragments[frag].loc.end.line - this.fragments[frag].loc.start.line;
+                const replacedColumns = this.fragments[frag].loc.end.column - this.fragments[frag].loc.start.column;
 
                 // If there were any lines added by the fragment string, the line offset should increase;
                 // If there were any lines removed by the fragment replacement then the line offset should decrease
@@ -54,27 +52,27 @@ class SourceMapper {
                 // Note that "replacedColumns" might be negative in some cases (if the beginning of the source
                 // was further right than the end due to a newline); the math still works out.
                 columnOffset = fragmentLines.length > 1 ?
-                    fragmentLines[fragmentLines.length - 1].length - self.fragments[frag].loc.end.column :
-                    columnOffset + self.fragments[frag].str.length - replacedColumns;
+                    fragmentLines[fragmentLines.length - 1].length - this.fragments[frag].loc.end.column :
+                    columnOffset + this.fragments[frag].str.length - replacedColumns;
 
-                currentLine = self.fragments[frag].loc.end.line;
+                currentLine = this.fragments[frag].loc.end.line;
 
                 // Skip creating mappings for any source nodes that were replaced by this fragment (and are thus
                 // no longer a part of the output)
-                while (pos < self.nodePositions.length &&
-                    compareLoc(self.fragments[frag].loc.end, self.nodePositions[pos]) > 0) {
+                while (pos < this.nodePositions.length &&
+                    compareLoc(this.fragments[frag].loc.end, this.nodePositions[pos]) > 0) {
                     ++pos;
                 }
 
                 ++frag;
             }
 
-            if (pos < self.nodePositions.length) {
-                if (currentLine < self.nodePositions[pos].line)
+            if (pos < this.nodePositions.length) {
+                if (currentLine < this.nodePositions[pos].line)
                     columnOffset = 0;
-                self.addMapping(self.nodePositions[pos], {
-                    line: self.nodePositions[pos].line + lineOffset,
-                    column: self.nodePositions[pos].column + columnOffset,
+                this.addMapping(this.nodePositions[pos], {
+                    line: this.nodePositions[pos].line + lineOffset,
+                    column: this.nodePositions[pos].column + columnOffset,
                 });
                 ++pos;
             }
