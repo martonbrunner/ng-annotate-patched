@@ -14,8 +14,8 @@ module.exports = {
     isReference: isReference,
 };
 
-function setupScopeAndReferences(root) {
-    traverse(root, {pre: createScopes});
+function setupScopeAndReferences(root, pluginOptions = {}) {
+    traverse(root, {pre: createScopes}, pluginOptions);
     createTopScope(root.$scope);
 }
 
