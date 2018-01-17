@@ -1,7 +1,8 @@
-## UNRELEASED
+## 1.7.0 2018-01-18
  * Require node>=4.0.0.
  * Reorganize internal directory structure. The main file moved to
    `src/ng-annotate-main.js`.
+ * Don't fail upon encountering dynamic `import()`.
 
 ## v1.6.0 2017-05-28
  * Switch from tilde ~ dependencies to ^ caret dependencies.
