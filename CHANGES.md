@@ -2,6 +2,7 @@
  * Require node>=4.0.0.
  * Reorganize internal directory structure. The main file moved to
    `src/ng-annotate-main.js`.
+ * Add basic support for ES6 property shorthand and destructuring.
  * Don't fail upon encountering dynamic `import()`.
 
 ## v1.6.0 2017-05-28
