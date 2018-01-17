@@ -16,7 +16,6 @@ const scopeTools = require("./scopetools");
 const stringmap = require("stringmap");
 const optionalAngularDashboardFramework = require("./optionals/angular-dashboard-framework");
 const require_acorn_t0 = Date.now();
-const parser = require("acorn").parse;
 const require_acorn_t1 = Date.now();
 
 const chainedRouteProvider = 1;
@@ -454,12 +453,6 @@ function stringify(ctx, arr, quot) {
     return "[" + arr.map(function(arg) {
         return quot + renamedString(ctx, arg.name) + quot;
     }).join(", ") + "]";
-}
-
-function parseExpressionOfType(str, type) {
-    const node = parser(str).body[0].expression;
-    assert(node.type === type);
-    return node;
 }
 
 // stand-in for not having a jsshaper-style ref's
@@ -1100,6 +1093,8 @@ module.exports = function ngAnnotate(src, options) {
     let comments = [];
 
     try {
+        const acorn = require("acorn");
+        const parser = options.dynamicImport ? require("acorn-dynamic-import/lib/inject").default(acorn).parse : acorn.parse;
         stats.parser_require_t0 = require_acorn_t0;
         stats.parser_require_t1 = require_acorn_t1;
         stats.parser_parse_t0 = Date.now();
@@ -1111,6 +1106,7 @@ module.exports = function ngAnnotate(src, options) {
             locations: true,
             ranges: true,
             onComment: comments,
+            plugins: options.dynamicImport ? { dynamicImport: true } : {}, // just having the key triggers plugin regardless of value
         }, options.acornOptions));
         stats.parser_parse_t1 = Date.now();
     } catch(e) {
@@ -1149,9 +1145,9 @@ module.exports = function ngAnnotate(src, options) {
     // used for sourcemap generation
     const nodePositions = [];
 
-    const lut = new Lut(ast, src);
+    const lut = new Lut(ast, src, options);
 
-    scopeTools.setupScopeAndReferences(ast);
+    scopeTools.setupScopeAndReferences(ast, options);
 
     const ctx = {
         mode: mode,
@@ -1227,7 +1223,7 @@ module.exports = function ngAnnotate(src, options) {
         for (let i = 0; i < targets.length; i++) {
             addModuleContextDependentSuspect(targets[i], ctx);
         }
-    }});
+    }}, options);
 
     try {
         judgeSuspects(ctx);

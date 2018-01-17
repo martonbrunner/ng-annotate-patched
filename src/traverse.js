@@ -1,9 +1,11 @@
 // traverse.js
 // MIT licensed, see LICENSE file
 
-const walk = require("acorn/dist/walk");
+const defaultWalk = require("acorn/dist/walk");
+const dynamicImportWalk = require("acorn-dynamic-import/lib/walk").inject(defaultWalk);
 
-module.exports = function traverse(rootNode, options) {
+module.exports = function traverse(rootNode, options, pluginOptions = {}) {
+    const walk = pluginOptions.dynamicImport ? dynamicImportWalk : defaultWalk;
     const ancestors = [];
     (function c(node, st, override) {
         const parent = ancestors[ancestors.length - 1];

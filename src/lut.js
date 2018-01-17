@@ -9,7 +9,7 @@ const traverse = require("./traverse");
 const is = require("simple-is");
 
 module.exports = class Lut {
-    constructor(ast, src) {
+    constructor(ast, src, pluginOptions = {}) {
         const sparseBegins = new Array(src.length);
         const begins = [];
         const sparseEnds = new Array(src.length);
@@ -29,7 +29,7 @@ module.exports = class Lut {
             if (!sparseEnds[p]) {
                 sparseEnds[p] = node;
             }
-        }});
+        }}, pluginOptions);
         for (let i in sparseBegins) {
             begins.push(sparseBegins[i]);
         }
