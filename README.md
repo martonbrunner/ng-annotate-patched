@@ -20,6 +20,12 @@ This fork contains the following changes:
 - Added support for ngInject in `export [default] function functionName() {...}`
   and `export [default] var varName = function [functionName]() {...}`.
 
+- Added support for dynamic `import()` syntax. If you use Webpack or a similar
+  module loader you would probably like to compile to `esnext` modules for
+  dynamic import support. To do that you will need to pass the
+  `dynamicImport` flag which will switch from the default acorn package,
+  to the upgraded `acorn-dynamic-import`.
+
 - Published to npm under the name `ng-annotate-patched`.
 
 All work is done on the `fork` branch. The `master` branch corresponds to
@@ -108,10 +114,6 @@ ng-annotate supports ES5 as input so run it with the output from Babel, Traceur,
 TypeScript (tsc) and the likes. Use `"ngInject"` on functions you want annotated.
 Your transpiler should preserve directive prologues, if not please file a bug on it.
 
-## Dynamic Imports
-If you use webpack or similar module loader you would probably like to compile to `esnext` modules
-for dynamic import support. To do that you will need to pass the `dynamicImport` flag which will switch
-from the default acorn package, to the upgraded `acorn-dynamic-import`.
 
 ## Highly recommended: enable ng-strict-di
 `<div ng-app="myApp" ng-strict-di>`
