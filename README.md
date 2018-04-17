@@ -73,7 +73,7 @@ de-annotate an existing codebase that came with checked-in annotations
 ## Installation and usage
 
 ```bash
-npm install -g ng-annotate
+npm install -g ng-annotate-patched
 ```
 
 Then run it as `ng-annotate OPTIONS <file>`. The errors (if any) will go to stderr,
