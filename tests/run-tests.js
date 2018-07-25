@@ -30,11 +30,15 @@ function time(str, fn) {
 }
 
 function test(correct, got, name) {
-    if (got !== correct) {
+    if (normalizeLineEndings(got) !== normalizeLineEndings(correct)) {
         const patch = diff.createPatch(name, correct, got);
         process.stderr.write(patch);
         process.exit(-1);
     }
+}
+
+function normalizeLineEndings(str) {
+  return str.replace(/\r?\n/g, "\r\n");
 }
 
 const renameOptions = [
