@@ -6,7 +6,6 @@
 
 const assert = require("assert");
 const stringmap = require("stringmap");
-const stringset = require("stringset");
 
 module.exports = class Scope {
     constructor(args) {
@@ -45,7 +44,7 @@ module.exports = class Scope {
         // referenced in this scope (immediately or in child).
         // only stored on hoist scopes for efficiency
         // (because we currently generate lots of empty block scopes)
-        this.propagates = (this.kind === "hoist" ? stringset() : null);
+        this.propagates = (this.kind === "hoist" ? new Set() : null);
 
         // scopes register themselves with their parents for easier traversal
         if (this.parent) {
