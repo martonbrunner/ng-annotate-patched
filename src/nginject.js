@@ -4,8 +4,6 @@
 
 "use strict";
 
-const is = require("simple-is");
-
 module.exports = {
     inspectComments: inspectComments,
     inspectNode: inspectNode,
@@ -126,7 +124,7 @@ function isStringArray(node) {
         return false;
     }
     return node.elements.length >= 1 && node.elements.every(function(n) {
-        return n.type === "Literal" && is.string(n.value);
+        return n.type === "Literal" && typeof n.value === "string";
     });
 }
 
@@ -195,7 +193,7 @@ function nestedObjectValues(node, res) {
 
     node.properties.forEach(function(prop) {
         const v = prop.value;
-        if (is.someof(v.type, ["FunctionExpression", "ArrayExpression"])) {
+        if (["FunctionExpression", "ArrayExpression"].includes(v.type)) {
             res.push(v);
         } else if (v.type === "ObjectExpression") {
             nestedObjectValues(v, res);

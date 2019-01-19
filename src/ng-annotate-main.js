@@ -3,7 +3,6 @@
 // Copyright (c) 2013-2016 Olov Lassus <olov.lassus@gmail.com>
 
 "use strict";
-const is = require("simple-is");
 const alter = require("alter");
 const traverse = require("./traverse");
 let EOL = require("os").EOL;
@@ -55,7 +54,7 @@ function matchMaterialShowModalOpen(node) {
     const args = node.arguments;
 
     if (obj.type === "Identifier" &&
-        ((is.someof(obj.name, ["$modal", "$uibModal"]) && method.name === "open") || (is.someof(obj.name, ["$mdDialog", "$mdToast", "$mdBottomSheet"]) && method.name === "show")) &&
+        ((["$modal", "$uibModal"].includes(obj.name) && method.name === "open") || (["$mdDialog", "$mdToast", "$mdBottomSheet"].includes(obj.name) && method.name === "show")) &&
         args.length === 1 && args[0].type === "ObjectExpression") {
         const props = args[0].properties;
         const res = [matchProp("controller", props)];
@@ -89,7 +88,7 @@ function matchProviderGet(node) {
     let self;
     return limit("provider", (node.type === "AssignmentExpression" && (memberExpr = node.left).type === "MemberExpression" &&
         memberExpr.property.name === "$get" &&
-        ((self = memberExpr.object).type === "ThisExpression" || (self.type === "Identifier" && is.someof(self.name, ["self", "that"]))) &&
+        ((self = memberExpr.object).type === "ThisExpression" || (self.type === "Identifier" && ["self", "that"].includes(self.name))) &&
         node.right) ||
         (node.type === "ObjectExpression" && matchProp("$get", node.properties)));
 }
@@ -171,12 +170,12 @@ function matchNgUi(node) {
     }
 
     // everything below is for $stateProvider and stateHelperProvider alone
-    if (!(obj.$chained === chainedStateProvider || (obj.type === "Identifier" && is.someof(obj.name, ["$stateProvider", "stateHelperProvider"])))) {
+    if (!(obj.$chained === chainedStateProvider || (obj.type === "Identifier" && ["$stateProvider", "stateHelperProvider"].includes(obj.name)))) {
         return false;
     }
     node.$chained = chainedStateProvider;
 
-    if (is.noneof(method.name, ["state", "setNestedState"])) {
+    if (!["state", "setNestedState"].includes(method.name)) {
         return false;
     }
 
@@ -278,7 +277,7 @@ function matchHttpProvider(node) {
 
     return (method.name === "push" &&
         obj.type === "MemberExpression" && !obj.computed &&
-        obj.object.name === "$httpProvider" && is.someof(obj.property.name,  ["interceptors", "responseInterceptors"]) &&
+        obj.object.name === "$httpProvider" && ["interceptors", "responseInterceptors"].includes(obj.property.name) &&
         node.arguments.length >= 1 && node.arguments);
 }
 
@@ -313,7 +312,7 @@ function matchProvide(node, ctx) {
     const args = node.arguments;
 
     const target = obj.type === "Identifier" && obj.name === "$provide" &&
-        is.someof(method.name, ["decorator", "service", "factory", "provider"]) &&
+        ["decorator", "service", "factory", "provider"].includes(method.name) &&
         args.length === 2 && args[1];
 
     if (target) {
@@ -350,20 +349,20 @@ function matchRegular(node, ctx) {
     }
 
     const matchAngularModule = (obj.$chained === chainedRegular || isReDef(obj, ctx) || isLongDef(obj)) &&
-        is.someof(method.name, ["provider", "value", "constant", "bootstrap", "config", "factory", "directive", "filter", "run", "controller", "service", "animation", "invoke", "store", "decorator", "component"]);
+        ["provider", "value", "constant", "bootstrap", "config", "factory", "directive", "filter", "run", "controller", "service", "animation", "invoke", "store", "decorator", "component"].includes(method.name);
     if (!matchAngularModule) {
         return false;
     }
     node.$chained = chainedRegular;
 
-    if (is.someof(method.name, ["value", "constant", "bootstrap"])) {
+    if (["value", "constant", "bootstrap"].includes(method.name)) {
         return false; // affects matchAngularModule because of chaining
     }
 
     const args = node.arguments;
-    let target = (is.someof(method.name, ["config", "run"]) ?
+    let target = (["config", "run"].includes(method.name) ?
         args.length === 1 && args[0] :
-        args.length === 2 && args[0].type === "Literal" && is.string(args[0].value) && args[1]);
+        args.length === 2 && args[0].type === "Literal" && typeof args[0].value === "string" && args[1]);
 
     if (method.name === "component") {
         const controllerProp = (target && target.type === "ObjectExpression" && matchProp("controller", target.properties));
@@ -595,7 +594,7 @@ function judgeSuspects(ctx) {
             replaceArray(ctx, target, fragments, quot);
         } else if (mode === "remove" && isAnnotatedArray(target)) {
             removeArray(target, fragments);
-        } else if (is.someof(mode, ["add", "rebuild"]) && isFunctionExpressionWithArgs(target)) {
+        } else if (["add", "rebuild"].includes(mode) && isFunctionExpressionWithArgs(target)) {
             insertArray(ctx, target, fragments, quot);
         } else if (isGenericProviderName(target)) {
             renameProviderDeclarationSite(ctx, target, fragments);
@@ -692,7 +691,7 @@ function followReference(node) {
     }
     const ptype = parent.type;
 
-    if (is.someof(kind, ["const", "let", "var"])) {
+    if (["const", "let", "var"].includes(kind)) {
         assert(ptype === "VariableDeclarator");
         // {type: "VariableDeclarator", id: {type: "Identifier", name: "foo"}, init: ..}
         return parent;
@@ -751,7 +750,7 @@ function judgeInjectArraySuspect(node, ctx) {
     // node is inner match, descent in multiple steps
     let onode = null;
 
-    if (is.someof(node.type, ["ExportDefaultDeclaration", "ExportNamedDeclaration"])) {
+    if (["ExportDefaultDeclaration", "ExportNamedDeclaration"].includes(node.type)) {
         onode = node;
         node = node.declaration;
     }
@@ -784,13 +783,13 @@ function judgeInjectArraySuspect(node, ctx) {
         onode = node;
     }
 
-    if (onode.$parent && is.someof(onode.$parent.type, ["ExportDefaultDeclaration", "ExportNamedDeclaration"])) {
+    if (onode.$parent && ["ExportDefaultDeclaration", "ExportNamedDeclaration"].includes(onode.$parent.type)) {
         // export var x = function($scope) { "ngInject"; }
         onode = onode.$parent;
     }
 
     // suspect must be inside of a block or at the top-level (i.e. inside of node.$parent.body[])
-    if (!node || !onode.$parent || is.noneof(onode.$parent.type, ["Program", "BlockStatement"])) {
+    if (!node || !onode.$parent || !["Program", "BlockStatement"].includes(onode.$parent.type)) {
         return;
     }
 
@@ -947,7 +946,7 @@ function judgeInjectArraySuspect(node, ctx) {
                     end: existingExpressionStatementWithArray.loc.end
                 }
             });
-        } else if (is.someof(ctx.mode, ["add", "rebuild"]) && !existingExpressionStatementWithArray) {
+        } else if (["add", "rebuild"].includes(ctx.mode) && !existingExpressionStatementWithArray) {
             const str = `${EOL}${indent}${name}.$inject = ${ctx.stringify(ctx, params, ctx.quot)};`;
             ctx.fragments.push({
                 start: posAfterFunctionDeclaration.pos,
@@ -1002,7 +1001,7 @@ function isAnnotatedArray(node) {
     // all but last should be string literals
     for (let i = 0; i < elements.length - 1; i++) {
         const n = elements[i];
-        if (n.type !== "Literal" || !is.string(n.value)) {
+        if (n.type !== "Literal" || typeof n.value !== "string") {
             return false;
         }
     }
@@ -1018,7 +1017,7 @@ function isFunctionDeclarationWithArgs(node) {
     return node.type === "FunctionDeclaration" && node.params.length >= 1 && node.id !== null;
 }
 function isGenericProviderName(node) {
-    return node.type === "Literal" && is.string(node.value);
+    return node.type === "Literal" && typeof node.value === "string";
 }
 
 function uniqifyFragments(fragments) {
@@ -1200,7 +1199,7 @@ module.exports = function ngAnnotate(src, options) {
         if (!targets) {
             return;
         }
-        if (!is.array(targets)) {
+        if (!Array.isArray(targets)) {
             targets = [targets];
         }
 

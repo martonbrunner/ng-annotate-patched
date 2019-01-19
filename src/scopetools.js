@@ -7,7 +7,6 @@
 const assert = require("assert");
 const traverse = require("./traverse");
 const Scope = require("./scope");
-const is = require("simple-is");
 
 module.exports = {
     setupScopeAndReferences: setupScopeAndReferences,
@@ -201,6 +200,6 @@ function isReference(node) {
             !(parent.type === "LabeledStatement" && parent.label === node) && // $: ...
             !(parent.type === "CatchClause" && parent.param === node) && // catch($)
             !(isFunction(parent) && parent.id === node) && // function $(..
-            !(isFunction(parent) && is.someof(node, parent.params)) && // function f($)..
+            !(isFunction(parent) && parent.params.includes(node)) && // function f($)..
             true;
 }

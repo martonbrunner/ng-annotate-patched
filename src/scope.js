@@ -7,13 +7,12 @@
 const assert = require("assert");
 const stringmap = require("stringmap");
 const stringset = require("stringset");
-const is = require("simple-is");
 
 module.exports = class Scope {
     constructor(args) {
-        assert(is.someof(args.kind, ["hoist", "block", "catch-block"]));
-        assert(is.object(args.node));
-        assert(args.parent === null || is.object(args.parent));
+        assert(["hoist", "block", "catch-block"].includes(args.kind));
+        assert(args.node !== null && typeof args.node === "object");
+        assert(args.parent === null || typeof args.parent === "object");
 
         // kind === "hoist": function scopes, program scope, injected globals
         // kind === "block": ES6 block scopes
@@ -68,17 +67,17 @@ module.exports = class Scope {
     }
 
     add(name, kind, node, referableFromPos) {
-        assert(is.someof(kind, ["fun", "param", "var", "caught", "const", "let"]));
+        assert(["fun", "param", "var", "caught", "const", "let"].includes(kind));
 
         // function isConstLet(kind) {
-        //     return is.someof(kind, ["const", "let"]);
+        //     return ["const", "let"].includes(kind);
         // }
 
         let scope = this;
 
         // search nearest hoist-scope for fun, param and var's
         // const, let and caught variables go directly in the scope (which may be hoist, block or catch-block)
-        if (is.someof(kind, ["fun", "param", "var"])) {
+        if (["fun", "param", "var"].includes(kind)) {
             while (scope.kind !== "hoist") {
                 // if (scope.decls.has(name) && isConstLet(scope.decls.get(name).kind)) { // could be caught
                 //     return error(getline(node), "{0} is already declared", name);
@@ -96,26 +95,26 @@ module.exports = class Scope {
             node,
         };
         if (referableFromPos) {
-            assert(is.someof(kind, ["var", "const", "let"]));
+            assert(["var", "const", "let"].includes(kind));
             declaration.from = referableFromPos;
         }
         scope.decls.set(name, declaration);
     }
 
     getKind(name) {
-        assert(is.string(name));
+        assert(typeof name === "string");
         const decl = this.decls.get(name);
         return decl ? decl.kind : null;
     }
 
     getNode(name) {
-        assert(is.string(name));
+        assert(typeof name === "string");
         const decl = this.decls.get(name);
         return decl ? decl.node : null;
     }
 
     getFromPos(name) {
-        assert(is.string(name));
+        assert(typeof name === "string");
         const decl = this.decls.get(name);
         return decl ? decl.from : null;
     }

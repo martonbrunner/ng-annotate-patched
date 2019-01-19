@@ -6,7 +6,6 @@
 
 const assert = require("assert");
 const traverse = require("./traverse");
-const is = require("simple-is");
 
 module.exports = class Lut {
     constructor(ast, src, pluginOptions = {}) {
@@ -49,7 +48,7 @@ module.exports = class Lut {
     // or as close after pos as possible. null if none
     findNodeFromPos(pos) {
         const lut = this.begins;
-        assert(is.finitenumber(pos) && pos >= 0);
+        assert(Number.isFinite(pos) && pos >= 0);
 
         let left = 0;
         let right = lut.length - 1;
@@ -83,7 +82,7 @@ module.exports = class Lut {
     // at or before pos. null if none
     findNodeBeforePos(pos) {
         const lut = this.ends;
-        assert(is.finitenumber(pos) && pos >= 0);
+        assert(Number.isFinite(pos) && pos >= 0);
 
         let left = 0;
         let right = lut.length - 1;
