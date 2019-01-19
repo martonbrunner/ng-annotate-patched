@@ -170,17 +170,14 @@ function run(ngAnnotate) {
     console.log("testing optionals/angular-dashboard-framework.js (removing annotations)");
     test(adf, ngAnnotate(adfAnnotated, {remove: true, plugin: [ngAnnotateAdfPlugin]}).src, "optionals/angular-dashboard-framework.js");
 
+    console.log("testing performance");
+    const ng1 = String(fs.readFileSync("tests/angular.js"));
+    const ng5 = ng1 + ng1 + ng1 + ng1 + ng1;
 
-    if (fs.existsSync("tests/angular.js")) {
-        console.log("testing performance");
-        const ng1 = String(fs.readFileSync("tests/angular.js"));
-        const ng5 = ng1 + ng1 + ng1 + ng1 + ng1;
-
-        time("  ng1 processed in {0} ms", function() { ngAnnotate(ng1, {add: true}) });
-        time("  ng1 processed with sourcemaps in {0} ms", function() { ngAnnotate(ng1, {add: true, map: true}) });
-        //time("  ng5 processed in {0} ms", function() { ngAnnotate(ng5, {add: true}) });
-        //time("  ng5 processed with sourcemaps in {0} ms", function() { ngAnnotate(ng5, {add: true, map: true}) });
-    }
+    time("  ng1 processed in {0} ms", function() { ngAnnotate(ng1, {add: true}) });
+    time("  ng1 processed with sourcemaps in {0} ms", function() { ngAnnotate(ng1, {add: true, map: true}) });
+    //time("  ng5 processed in {0} ms", function() { ngAnnotate(ng5, {add: true}) });
+    //time("  ng5 processed with sourcemaps in {0} ms", function() { ngAnnotate(ng5, {add: true, map: true}) });
 
     console.log("all ok");
 }
