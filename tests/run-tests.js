@@ -4,12 +4,12 @@
 
 "use strict";
 
+const assert = require("assert");
 const ngAnnotate = require("../src/ng-annotate-main");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const diff = require("diff");
-const findLineColumn = require("find-line-column");
 const SourceMapConsumer = require("source-map").SourceMapConsumer;
 const coffee = require("coffee-script");
 const convertSourceMap = require("convert-source-map");
@@ -38,6 +38,25 @@ function test(correct, got, name) {
 
 function normalizeLineEndings(str) {
   return str.replace(/\r?\n/g, "\r\n");
+}
+
+function findLineColumn(content, index) {
+    let line = 1;
+    let col = 0;
+    let i = 0;
+    for (const ch of content) {
+        if (i === index) {
+            return {line, col};
+        }
+        if (ch === "\n") {
+            line += 1;
+            col = 0;
+        } else {
+            col += 1;
+        }
+        i += 1;
+    }
+    assert(index < content.length);
 }
 
 const renameOptions = [
