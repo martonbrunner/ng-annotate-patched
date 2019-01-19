@@ -3,7 +3,6 @@
 // Copyright (c) 2013-2016 Olov Lassus <olov.lassus@gmail.com>
 
 "use strict";
-const alter = require("alter");
 const traverse = require("./traverse");
 let EOL = require("os").EOL;
 const assert = require("assert");
@@ -11,6 +10,7 @@ const ngInject = require("./nginject");
 const generateSourcemap = require("./generate-sourcemap");
 const Lut = require("./lut");
 const scopeTools = require("./scopetools");
+const stableSort = require("./utils").stableSort;
 const stringmap = require("stringmap");
 const optionalAngularDashboardFramework = require("./optionals/angular-dashboard-framework");
 const require_acorn_t0 = Date.now();
@@ -1039,6 +1039,25 @@ function uniqifyFragments(fragments) {
 const allOptionals = {
     "angular-dashboard-framework": optionalAngularDashboardFramework,
 };
+
+// Alters a string by replacing multiple range fragments in one fast pass.
+// fragments is a list of {start: index, end: index, str: string to replace with}.
+// The fragments do not need to be sorted but must not overlap.
+function alter(str, fragments) {
+    // stableSort isn't in-place so no need to copy array first
+    const sortedFragments = stableSort(fragments, (a, b) => a.start - b.start);
+    const outs = [];
+    let pos = 0;
+    for (const frag of sortedFragments) {
+        assert(pos <= frag.start);
+        assert(frag.start <= frag.end);
+        outs.push(str.slice(pos, frag.start));
+        outs.push(frag.str);
+        pos = frag.end;
+    }
+    outs.push(str.slice(pos));
+    return outs.join("");
+}
 
 module.exports = function ngAnnotate(src, options) {
     if (options.list) {
