@@ -14,7 +14,6 @@
     "convert-source-map": "^1.1.2",
     "optimist": "^0.6.1",
     "source-map": "^0.5.3",
-    "stable": "^0.1.5",
     "stringmap": "^0.2.2",
     "stringset": "^0.2.1"
   },

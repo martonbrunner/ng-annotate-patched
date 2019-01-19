@@ -4,7 +4,7 @@ const os = require("os");
 const convertSourceMap = require("convert-source-map");
 const SourceMapConsumer = require("source-map").SourceMapConsumer;
 const SourceMapGenerator = require("source-map").SourceMapGenerator;
-const stableSort = require("stable");
+const stableSort = require("./utils").stableSort;
 
 class SourceMapper {
     constructor(src, nodePositions, fragments, inFile, sourceRoot) {
