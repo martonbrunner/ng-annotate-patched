@@ -6,7 +6,6 @@
 
 const t0 = Date.now();
 const fs = require("fs");
-const tryor = require("tryor");
 const ngAnnotate = require("./ng-annotate-main");
 const version = require("../package.json").version;
 const optimist = require("optimist")
@@ -123,9 +122,12 @@ function runAnnotate(err, src) {
 
     src = String(src);
 
-    const config = tryor(function() {
-        return JSON.parse(String(fs.readFileSync("ng-annotate-config.json")));
-    }, {});
+    let config;
+    try {
+        config = JSON.parse(String(fs.readFileSync("ng-annotate-config.json")));
+    } catch (e) {
+        config = {};
+    }
 
     if (filename !== "-") {
         config.inFile = filename;
@@ -153,7 +155,12 @@ function runAnnotate(err, src) {
             config.plugin = [config.plugin];
         }
         config.plugin = config.plugin.map(function(path) {
-            const absPath = tryor(fs.realpathSync.bind(fs, path), null);
+            let absPath;
+            try {
+                absPath = fs.realpathSync.bind(fs, path);
+            } catch (e) {
+                absPath = null;
+            }
             if (!absPath) {
                 exit(`error: plugin file not found ${path}`);
             }
