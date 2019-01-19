@@ -3,7 +3,6 @@
 // Copyright (c) 2013-2016 Olov Lassus <olov.lassus@gmail.com>
 
 "use strict";
-const fmt = require("simple-fmt");
 const is = require("simple-is");
 const alter = require("alter");
 const traverse = require("./traverse");
@@ -869,9 +868,9 @@ function judgeInjectArraySuspect(node, ctx) {
 
             if (hasInjectArray(bnode)) {
                 if (existingExpressionStatementWithArray) {
-                    throw fmt("conflicting inject arrays at line {0} and {1}",
-                        posToLine(existingExpressionStatementWithArray.range[0], ctx.src),
-                        posToLine(bnode.range[0], ctx.src));
+                    const first = posToLine(existingExpressionStatementWithArray.range[0], ctx.src);
+                    const second = posToLine(bnode.range[0], ctx.src);
+                    throw `conflicting inject arrays at line ${first} and ${second}`;
                 }
                 existingExpressionStatementWithArray = bnode;
             }
@@ -927,7 +926,7 @@ function judgeInjectArraySuspect(node, ctx) {
         }
 
         if (ctx.mode === "rebuild" && existingExpressionStatementWithArray) {
-            const strNoWhitespace = fmt("{2}.$inject = {3};", null, null, name, ctx.stringify(ctx, params, ctx.quot));
+            const strNoWhitespace = `${name}.$inject = ${ctx.stringify(ctx, params, ctx.quot)};`;
             ctx.fragments.push({
                 start: existingExpressionStatementWithArray.range[0],
                 end: existingExpressionStatementWithArray.range[1],
@@ -949,7 +948,7 @@ function judgeInjectArraySuspect(node, ctx) {
                 }
             });
         } else if (is.someof(ctx.mode, ["add", "rebuild"]) && !existingExpressionStatementWithArray) {
-            const str = fmt("{0}{1}{2}.$inject = {3};", EOL, indent, name, ctx.stringify(ctx, params, ctx.quot));
+            const str = `${EOL}${indent}${name}.$inject = ${ctx.stringify(ctx, params, ctx.quot)};`;
             ctx.fragments.push({
                 start: posAfterFunctionDeclaration.pos,
                 end: posAfterFunctionDeclaration.pos,

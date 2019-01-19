@@ -10,7 +10,6 @@ const os = require("os");
 const path = require("path");
 const diff = require("diff");
 const findLineColumn = require("find-line-column");
-const fmt = require("simple-fmt");
 const SourceMapConsumer = require("source-map").SourceMapConsumer;
 const coffee = require("coffee-script");
 const convertSourceMap = require("convert-source-map");
@@ -22,11 +21,11 @@ function slurp(filename) {
     return String(fs.readFileSync(filename));
 }
 
-function time(str, fn) {
+function time(name, fn) {
     const t0 = Date.now();
     fn();
     const t1 = Date.now();
-    console.log(fmt(str, t1 - t0));
+    console.log(`  [${t1 - t0}ms] ${name}`);
 }
 
 function test(correct, got, name) {
@@ -67,13 +66,13 @@ function testSourcemap(original, got, sourcemap) {
     function testMapping(needle) {
         const gotResult = needle.exec(got);
         if (gotResult == null) {
-            process.stderr.write(fmt("Couldn't find {0} in output source", needle));
+            process.stderr.write(`Couldn't find ${needle} in output source`);
             process.exit(-1);
         }
 
         const expectedResult = needle.exec(original);
         if (expectedResult == null) {
-            process.stderr.write(fmt("Couldn't find {0} in expected source", needle));
+            process.stderr.write(`Couldn't find ${needle} in expected source`);
             process.exit(-1);
         }
 
@@ -82,11 +81,10 @@ function testSourcemap(original, got, sourcemap) {
         const expectedPosition = findLineColumn(original, expectedResult.index);
 
         if (originalPosition.line !== expectedPosition.line || originalPosition.column !== expectedPosition.col) {
-            process.stderr.write(fmt("Sourcemap mapping error for {0}. Expected: ({1},{2}) => ({3},{4}). Got: ({5},{6}) => ({3},{4}).",
-                needle,
-                expectedPosition.line, expectedPosition.col,
-                gotPosition.line, gotPosition.col,
-                originalPosition.line, originalPosition.column));
+            const expected = `(${expectedPosition.line},${expectedPosition.col})`;
+            const got = `(${gotPosition.line},${gotPosition.col})`;
+            const original = `(${originalPosition.line},${originalPosition.column})`;
+            process.stderr.write(`Sourcemap mapping error for ${needle}. Expected: ${expected} => ${got}. Got: ${original} => ${got}.`);
             process.exit(-1);
         }
     }
@@ -174,8 +172,8 @@ function run(ngAnnotate) {
     const ng1 = String(fs.readFileSync("tests/angular.js"));
     const ng5 = ng1 + ng1 + ng1 + ng1 + ng1;
 
-    time("  ng1 processed in {0} ms", function() { ngAnnotate(ng1, {add: true}) });
-    time("  ng1 processed with sourcemaps in {0} ms", function() { ngAnnotate(ng1, {add: true, map: true}) });
+    time("ng1", function() { ngAnnotate(ng1, {add: true}) });
+    time("ng1 with sourcemaps", function() { ngAnnotate(ng1, {add: true, map: true}) });
     //time("  ng5 processed in {0} ms", function() { ngAnnotate(ng5, {add: true}) });
     //time("  ng5 processed with sourcemaps in {0} ms", function() { ngAnnotate(ng5, {add: true, map: true}) });
 

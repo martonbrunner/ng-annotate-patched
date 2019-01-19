@@ -6,7 +6,6 @@
 
 const t0 = Date.now();
 const fs = require("fs");
-const fmt = require("simple-fmt");
 const tryor = require("tryor");
 const ngAnnotate = require("./ng-annotate-main");
 const version = require("../package.json").version;
@@ -111,7 +110,7 @@ function slurpStdin(cb) {
 
 function slurpFile(cb) {
     if (!fs.existsSync(filename)) {
-        cb(new Error(fmt('error: file not found {0}', filename)));
+        cb(new Error(`error: file not found ${filename}`));
     }
 
     fs.readFile(filename, cb);
@@ -156,14 +155,14 @@ function runAnnotate(err, src) {
         config.plugin = config.plugin.map(function(path) {
             const absPath = tryor(fs.realpathSync.bind(fs, path), null);
             if (!absPath) {
-                exit(fmt('error: plugin file not found {0}', path));
+                exit(`error: plugin file not found ${path}`);
             }
             // the require below may throw an exception on parse-error
             try {
                 return require(absPath);
             } catch (e) {
                 // node will already print file:line and offending line to stderr
-                exit(fmt("error: couldn't require(\"{0}\")", absPath));
+                exit(`error: couldn't require("${absPath}")`);
             }
         });
     }
@@ -204,8 +203,8 @@ function runAnnotate(err, src) {
             return Math.round(100 * n / all);
         }
 
-        process.stderr.write(fmt("[{0} ms] parser: {1}, nga init: {2}, nga run: {3}\n", all, all_parser, nga_init, nga_run));
-        process.stderr.write(fmt("[%] parser: {0}, nga init: {1}, nga run: {2}\n", pct(all_parser), pct(nga_init), pct(nga_run)));
+        process.stderr.write(`[${all} ms] parser: ${all_parser}, nga init: ${nga_init}, nga run: ${nga_run}\n`);
+        process.stderr.write(`[%] parser: ${pct(all_parser)}, nga init: ${pct(nga_init)}, nga run: ${pct(nga_run)}\n`);
     }
 
     if (ret.src && config.o) {

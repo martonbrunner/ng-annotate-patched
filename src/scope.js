@@ -8,7 +8,6 @@ const assert = require("assert");
 const stringmap = require("stringmap");
 const stringset = require("stringset");
 const is = require("simple-is");
-const fmt = require("simple-fmt");
 
 module.exports = class Scope {
     constructor(args) {
@@ -59,10 +58,10 @@ module.exports = class Scope {
         indent = indent || 0;
         const scope = this;
         const names = this.decls.keys().map(name => {
-            return fmt("{0} [{1}]", name, scope.decls.get(name).kind);
+            return `${name} [${scope.decls.get(name).kind}]`;
         }).join(", ");
         const propagates = this.propagates ? this.propagates.items().join(", ") : "";
-        console.log(fmt("{0}{1}: {2}. propagates: {3}", fmt.repeat(" ", indent), this.node.type, names, propagates));
+        console.log(`${fmt.repeat(" ", indent)}${this.node.type}: ${names}. propagates: ${propagates}`);
         this.children.forEach(c => {
             c.print(indent + 2);
         });
