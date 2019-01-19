@@ -11,7 +11,6 @@ const generateSourcemap = require("./generate-sourcemap");
 const Lut = require("./lut");
 const scopeTools = require("./scopetools");
 const stableSort = require("./utils").stableSort;
-const stringmap = require("stringmap");
 const optionalAngularDashboardFramework = require("./optionals/angular-dashboard-framework");
 const require_acorn_t0 = Date.now();
 const require_acorn_t1 = Date.now();
@@ -1076,7 +1075,7 @@ module.exports = function ngAnnotate(src, options) {
 
     const quot = options.single_quotes ? "'" : '"';
     const re = (options.regexp ? new RegExp(options.regexp) : /^[a-zA-Z0-9_\$\.\s]+$/);
-    const rename = new stringmap();
+    const rename = new Map();
     if (options.rename) {
         options.rename.forEach(function(value) {
             rename.set(value.from, value.to);

@@ -5,7 +5,6 @@
 "use strict";
 
 const assert = require("assert");
-const stringmap = require("stringmap");
 
 module.exports = class Scope {
     constructor(args) {
@@ -38,7 +37,7 @@ module.exports = class Scope {
         //     from: source code index from which it is visible at earliest
         //           (only stored for "const", "let" [and "var"] nodes)
         // }
-        this.decls = stringmap();
+        this.decls = new Map();
 
         // names of all variables declared outside this hoist scope but
         // referenced in this scope (immediately or in child).
