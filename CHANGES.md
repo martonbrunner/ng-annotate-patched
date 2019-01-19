@@ -1,3 +1,7 @@
+## 1.8.1 2019-01-19
+ * Remove a big and useless ctags file accidentally included in the 1.8.0
+   archive published to npm.
+
 ## 1.8.0 2019-01-19
  * Require node>=6.0.0.
  * Remove a lot of trivial dependencies.

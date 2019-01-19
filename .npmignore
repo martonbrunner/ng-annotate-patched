@@ -3,3 +3,4 @@
 /run-tests.js
 /.travis.yml
 /.npmignore
+tags
