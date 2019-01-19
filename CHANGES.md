@@ -1,3 +1,7 @@
+## 1.8.0 2019-01-19
+ * Require node>=6.0.0.
+ * Remove a lot of trivial dependencies.
+
 ## 1.7.0 2018-01-18
  * Require node>=4.0.0.
  * Reorganize internal directory structure. The main file moved to
