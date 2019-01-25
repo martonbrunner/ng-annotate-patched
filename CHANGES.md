@@ -1,3 +1,10 @@
+## 1.9.0 2019-01-25
+ * Added support for ES6 classes with explicit `ngInject` annotations.
+   The support may not be perfect yet. For more information please see
+   [ES6 test file](tests/es6-classes.js).
+ * Updated the acorn dependency from 5 -> 6.
+ * Updated the source-map dependency from 0.5 -> 0.6.
+
 ## 1.8.1 2019-01-19
  * Remove a big and useless ctags file accidentally included in the 1.8.0
    archive published to npm.
