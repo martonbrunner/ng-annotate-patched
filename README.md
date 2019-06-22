@@ -20,15 +20,19 @@ This fork contains the following changes:
 - Added support for ngInject in `export [default] function functionName() {...}`
   and `export [default] var varName = function [functionName]() {...}`.
 
-- Added support for ES6 classes with explicit `ngInject` annotations.
+- Added support for annotating ES6 classes with explicit `ngInject`
+  annotations.
   The support may not be perfect yet. For more information please see
   [ES6 test file](tests/es6-classes.js).
 
-- Added support for dynamic `import()` syntax. If you use Webpack or a similar
-  module loader you would probably like to compile to `esnext` modules for
-  dynamic import support. To do that you will need to pass the
-  `dynamicImport` flag which will switch from the default acorn package,
-  to the upgraded `acorn-dynamic-import`.
+- Added support for annotating arrow functions in most places where
+  old-style function expressions are accepted.
+
+- Added support for parsing dynamic `import()` syntax. If you use Webpack
+  or a similar module loader you would probably like to compile to
+  `esnext` modules for dynamic import support. To do that you will need to
+  pass the `dynamicImport` flag which will switch from the default acorn
+  package, to the upgraded `acorn-dynamic-import`.
 
 - Published to npm under the name `ng-annotate-patched`.
 

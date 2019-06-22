@@ -1,3 +1,7 @@
+## 1.10.0 2019-06-22
+* Added support for arrow functions, e.g. annotating
+  `var controller = ($scope) => { ngInject"; }`.
+
 ## 1.9.0 2019-01-25
  * Added support for ES6 classes with explicit `ngInject` annotations.
    The support may not be perfect yet. For more information please see
