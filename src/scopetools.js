@@ -171,7 +171,7 @@ function isConstLet(kind) {
 }
 
 function isNonFunctionBlock(node, parent) {
-    return node.type === "BlockStatement" && parent.type !== "FunctionDeclaration" && parent.type !== "FunctionExpression";
+    return node.type === "BlockStatement" && parent.type !== "FunctionDeclaration" && parent.type !== "FunctionExpression" && parent.type !== "ArrowFunctionExpression";
 }
 
 function isForWithConstLet(node) {
@@ -187,7 +187,7 @@ function isForInOf(node) {
 }
 
 function isFunction(node) {
-    return node.type === "FunctionDeclaration" || node.type === "FunctionExpression";
+    return node.type === "FunctionDeclaration" || node.type === "FunctionExpression" || node.type === "ArrowFunctionExpression";
 }
 
 function isReference(node) {

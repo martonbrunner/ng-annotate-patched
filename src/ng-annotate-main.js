@@ -63,13 +63,32 @@ function matchMaterialShowModalOpen(node) {
     return false;
 }
 
+function getObjectExpressionReturnProperties(node) {
+    // matches object return via `return`:
+    // 1. function() { return {} }
+    // 2. () => { return {} }
+    if (node.type === "ReturnStatement" &&
+        node.argument && node.argument.type === "ObjectExpression") {
+        return node.argument.properties;
+    }
+
+    // matches object return via arrow function shortcut:
+    // 1. () => ({})
+    if (node.type === "ArrowFunctionExpression" && node.expression === true &&
+        node.body.type === "ObjectExpression") {
+        return node.body.properties;
+    }
+
+    return undefined;
+}
+
 function matchDirectiveReturnObject(node) {
     // only matches inside directives
-    // return { .. controller: function($scope, $timeout), ...}
+    //   { .. controller: function($scope, $timeout), ...}
+    const properties = getObjectExpressionReturnProperties(node);
 
-    return limit("directive", node.type === "ReturnStatement" &&
-        node.argument && node.argument.type === "ObjectExpression" &&
-        matchProp("controller", node.argument.properties));
+    return limit("directive", properties &&
+        matchProp("controller", properties));
 }
 
 function limit(name, node) {
@@ -606,7 +625,7 @@ function judgeSuspects(ctx) {
             replaceArray(ctx, target, fragments, quot);
         } else if (mode === "remove" && isAnnotatedArray(target)) {
             removeArray(target, fragments);
-        } else if (["add", "rebuild"].includes(mode) && isFunctionExpressionWithArgs(target)) {
+        } else if (["add", "rebuild"].includes(mode) && isFunctionOrArrowFunctionExpressionWithArgs(target)) {
             insertArray(ctx, target, target, fragments, quot);
         } else if (["add", "rebuild"].includes(mode) && isClassExpression(target) && (constructor = findClassConstructorWithArgs(target))) {
             insertArray(ctx, constructor.value, target, fragments, quot);
@@ -710,7 +729,7 @@ function followReference(node) {
         // {type: "VariableDeclarator", id: {type: "Identifier", name: "foo"}, init: ..}
         return parent;
     } else if (kind === "fun") {
-        assert(ptype === "FunctionDeclaration" || ptype === "FunctionExpression")
+        assert(ptype === "FunctionDeclaration" || isFunctionOrArrowFunctionExpression(ptype))
         // FunctionDeclaration is the common case, i.e.
         // function foo(a, b) {}
 
@@ -843,7 +862,11 @@ function judgeInjectArraySuspect(node, ctx) {
             },
             className);
 
-    } else if (ctx.isFunctionExpressionWithArgs(node)) {
+    } else if (node.type === "ArrowFunctionExpression" && onode.type === "ExportDefaultDeclaration") {
+        // not implemented
+        // this is a default exported arrow function like:
+        // - export default (a, b) => {}
+    } else if (ctx.isFunctionOrArrowFunctionExpressionWithArgs(node)) {
         // var x = 1, y = function(a,b) {}, z;
 
         assert(declaratorName);
@@ -864,7 +887,7 @@ function judgeInjectArraySuspect(node, ctx) {
             node.id.name);
 
     } else if (node.type === "ExpressionStatement" && node.expression.type === "AssignmentExpression" &&
-        ctx.isFunctionExpressionWithArgs(node.expression.right)) {
+        ctx.isFunctionOrArrowFunctionExpressionWithArgs(node.expression.right)) {
         // /*@ngInject*/ foo.bar[0] = function($scope) {}
 
         const name = ctx.srcForRange(node.expression.left.range);
@@ -1004,16 +1027,35 @@ function judgeInjectArraySuspect(node, ctx) {
 }
 
 function jumpOverIife(node) {
-    let outerfn;
-    if (!(node.type === "CallExpression" && (outerfn = node.callee).type === "FunctionExpression")) {
+    if (node.type !== "CallExpression") {
         return node;
     }
 
-    const outerbody = outerfn.body.body;
-    for (let i = 0; i < outerbody.length; i++) {
-        const statement = outerbody[i];
-        if (statement.type === "ReturnStatement") {
-            return statement.argument;
+    const outerfn = node.callee;
+
+    /**
+     * IIFE as in:
+     *  - (() => 'value')()
+     */
+    if (outerfn.type === "ArrowFunctionExpression" && outerfn.expression) {
+        return outerfn.body;
+    }
+
+    /**
+     * IIFE as in:
+     *  - (() => { return 'value' })()
+     *  - (function { return 'value' })()
+     *
+     *  needs to loop over children, as the return could be anywhere inside the body, as in:
+     *  - (function { console.log('something before'); return 'value'; console.log('something behind, but valid javascript'); }()
+     */
+    if (isFunctionOrArrowFunctionExpression(outerfn.type)) {
+        const outerbody = outerfn.body.body;
+        for (let i = 0; i < outerbody.length; i++) {
+            const statement = outerbody[i];
+            if (statement.type === "ReturnStatement") {
+                return statement.argument;
+            }
         }
     }
 
@@ -1036,7 +1078,7 @@ function isAnnotatedArray(node) {
     const elements = node.elements;
 
     // last should be a function expression
-    if (elements.length === 0 || last(elements).type !== "FunctionExpression") {
+    if (elements.length === 0 || !isFunctionOrArrowFunctionExpression(last(elements).type)) {
         return false;
     }
 
@@ -1060,8 +1102,11 @@ function isClassExpression(node) {
 function isClassDeclaration(node) {
   return node.type === "ClassDeclaration";
 }
-function isFunctionExpressionWithArgs(node) {
-    return node.type === "FunctionExpression" && node.params.length >= 1;
+function isFunctionOrArrowFunctionExpression(type) {
+    return type === "FunctionExpression" || type === "ArrowFunctionExpression";
+}
+function isFunctionOrArrowFunctionExpressionWithArgs(node) {
+    return isFunctionOrArrowFunctionExpression(node.type) && node.params.length >= 1;
 }
 function isFunctionDeclarationWithArgs(node) {
     // For `export default function() {...}`, `id` is null, which means
@@ -1222,7 +1267,7 @@ module.exports = function ngAnnotate(src, options) {
         lut: lut,
         isClassExpression: isClassExpression,
         isClassDeclaration: isClassDeclaration,
-        isFunctionExpressionWithArgs: isFunctionExpressionWithArgs,
+        isFunctionOrArrowFunctionExpressionWithArgs: isFunctionOrArrowFunctionExpressionWithArgs,
         isFunctionDeclarationWithArgs: isFunctionDeclarationWithArgs,
         isAnnotatedArray: isAnnotatedArray,
         findClassConstructorWithArgs: findClassConstructorWithArgs,
