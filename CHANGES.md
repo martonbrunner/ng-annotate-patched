@@ -1,4 +1,4 @@
-## 1.11.0 2019-09-03
+## 1.11.1 2019-09-03
 * Updated acorn from version 6 to 7.
 * Set the default acorn ECMAScript version to 11 (2020).
 * Dynamic imports (`import()`) is supported unconditionally. The
