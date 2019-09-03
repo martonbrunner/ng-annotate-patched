@@ -1,3 +1,12 @@
+## 1.11.0 2019-09-03
+* Updated acorn from version 6 to 7.
+* Set the default acorn ECMAScript version to 11 (2020).
+* Dynamic imports (`import()`) is supported unconditionally. The
+  the dynamicImport option is now ignored, and the `acorn-dynamic-import`
+  dependency is removed.
+* Changed command line parsing library (reduce transitive dependency
+  count).
+
 ## 1.10.0 2019-06-22
 * Added support for arrow functions, e.g. annotating
   `var controller = ($scope) => { ngInject"; }`.
