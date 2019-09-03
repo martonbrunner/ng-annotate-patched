@@ -6,60 +6,30 @@
 
 const t0 = Date.now();
 const fs = require("fs");
+const commander = require("commander");
 const ngAnnotate = require("./ng-annotate-main");
 const version = require("../package.json").version;
-const optimist = require("optimist")
-    .usage("ng-annotate v" + version + "\n\nUsage: ng-annotate OPTIONS <file>\n\n" +
-        "provide - instead of <file> to read from stdin\n" +
-        "use -a and -r together to remove and add (rebuild) annotations in one go")
-    .options("a", {
-        alias: "add",
-        boolean: true,
-        describe: "add dependency injection annotations where non-existing",
-    })
-    .options("r", {
-        alias: "remove",
-        boolean: true,
-        describe: "remove all existing dependency injection annotations",
-    })
-    .options("o", {
-        describe: "write output to <file>. output is written to stdout by default",
-    })
-    .options("sourcemap", {
-        boolean: true,
-        describe: "generate an inline sourcemap"
-    })
-    .options("sourceroot", {
-        describe: "set the sourceRoot property of the generated sourcemap"
-    })
-    .options("single_quotes", {
-        boolean: true,
-        describe: "use single quotes (') instead of double quotes (\")",
-    })
-    .options("regexp", {
-        describe: "detect short form myMod.controller(...) iff myMod matches regexp",
-    })
-    .options("rename", {
-        describe: "rename declarations and annotated references\n" +
-            "oldname1 newname1 oldname2 newname2 ...",
-        default: ""
-    })
-    .options("plugin", {
-        describe: "use plugin with path (experimental)",
-    })
-    .options("enable", {
-        describe: "enable optional with name",
-    })
-    .options("list", {
-        describe: "list all optional names",
-        boolean: true,
-    })
-    .options("stats", {
-        boolean: true,
-        describe: "print statistics on stderr (experimental)",
-    });
 
-const argv = optimist.argv;
+const program = new commander.Command()
+    .version(version)
+    .usage(
+        "OPTIONS <file>\n\n" +
+        "provide - instead of <file> to read from stdin\n" +
+        "use -a and -r together to remove and add (rebuild) annotations in one go"
+    )
+    .option("-a, --add", "add dependency injection annotations where non-existing")
+    .option("-r, --remove", "remove all existing dependency injection annotations")
+    .option("-o <file>", "write output to <file>. output is written to stdout by default")
+    .option("--sourcemap", "generate an inline sourcemap")
+    .option("--sourceroot <sourceRoot>", "set the sourceRoot property of the generated sourcemap")
+    .option("--single_quotes", "use single quotes (') instead of double quotes (\")")
+    .option("--regexp <regexp>", "detect short form myMod.controller(...) iff myMod matches regexp")
+    .option("--rename <to>", "rename declarations and annotated references\noldname1 newname1 oldname2 newname2 ...", "")
+    .option("--plugin <plugin>", "use plugin with path (experimental)")
+    .option("--enable <name>", "enable optional with name")
+    .option("--list", "list all optional names")
+    .option("--stats", "print statistics on stderr (experimental)")
+    .parse(process.argv);
 
 function exit(msg) {
     if (msg) {
@@ -70,7 +40,7 @@ function exit(msg) {
 }
 
 // special-case for --list
-if (argv.list) {
+if (program.list) {
     const list = ngAnnotate("", {list: true}).list;
     if (list.length >= 1) {
         process.stdout.write(list.join("\n") + "\n");
@@ -79,17 +49,17 @@ if (argv.list) {
 }
 
 // validate options
-if (argv._.length !== 1) {
-    optimist.showHelp();
+if (program.args.length !== 1) {
+    program.outputHelp();
     exit("error: no input file provided");
 }
 
-if (!argv.add && !argv.remove) {
-    optimist.showHelp();
+if (!program.add && !program.remove) {
+    program.outputHelp();
     exit("error: missing option --add and/or --remove");
 }
 
-const filename = argv._.shift();
+const filename = program.args.shift();
 
 (filename === "-" ? slurpStdin : slurpFile)(runAnnotate);
 
@@ -134,13 +104,13 @@ function runAnnotate(err, src) {
     }
 
     ["add", "remove", "o", "regexp", "rename", "single_quotes", "plugin", "enable", "stats"].forEach(function(opt) {
-        if (opt in argv) {
-            config[opt] = argv[opt];
+        if (opt in program) {
+            config[opt] = program[opt];
         }
     });
 
-    if (argv.sourcemap) {
-        config.map = { inline: true, sourceRoot: argv.sourceroot };
+    if (program.sourcemap) {
+        config.map = { inline: true, sourceRoot: program.sourceroot };
         if (filename !== "-") {
             config.map.inFile = filename;
         }
