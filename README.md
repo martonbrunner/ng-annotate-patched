@@ -10,6 +10,7 @@ This fork contains the following changes:
 - Renamed package and binary from `ng-annotate` to `ng-annotate-patched`.
 
 - Updated the [acorn](https://github.com/ternjs/acorn) JavaScript parser.
+  ECMAScript 2020 mode is used by default.
 
 - Enabled some acorn options that allow it to parse a wider range of
   JavaScript.
@@ -30,9 +31,7 @@ This fork contains the following changes:
 
 - Added support for parsing dynamic `import()` syntax. If you use Webpack
   or a similar module loader you would probably like to compile to
-  `esnext` modules for dynamic import support. To do that you will need to
-  pass the `dynamicImport` flag which will switch from the default acorn
-  package, to the upgraded `acorn-dynamic-import`.
+  `esnext` modules for dynamic import support.
 
 - Published to npm under the name `ng-annotate-patched`.
 

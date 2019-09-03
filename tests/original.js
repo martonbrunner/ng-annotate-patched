@@ -1057,3 +1057,5 @@ export var exportVariableFunctionVar3 = function($scope) {
         };
     };
 })();
+
+import('dynamic-import-is-allowed.js').then(module => {});

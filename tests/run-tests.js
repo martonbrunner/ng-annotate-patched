@@ -128,10 +128,6 @@ function run(ngAnnotate) {
     const arrowFunctionsAnnotated = ngAnnotate(arrowFunctions, {add: true}).src;
     test(slurp("tests/arrow-functions.annotated.js"), arrowFunctionsAnnotated, "arrow-functions.annotated.js");
 
-    console.log("testing adding annotations with dynamicImport enabled");
-    const annotatedWithDynamicImportEnabled = ngAnnotate(original, {add: true, dynamicImport: true}).src;
-    test(slurp("tests/with_annotations.js"), annotatedWithDynamicImportEnabled, "with_annotations.js");
-
     const rename = slurp("tests/rename.js");
 
     console.log("testing adding annotations and renaming");

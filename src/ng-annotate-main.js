@@ -1196,19 +1196,18 @@ module.exports = function ngAnnotate(src, options) {
 
     try {
         const acorn = require("acorn");
-        const parser = options.dynamicImport ? acorn.Parser.extend(require("acorn-dynamic-import").default) : acorn.Parser;
         stats.parser_require_t0 = require_acorn_t0;
         stats.parser_require_t1 = require_acorn_t1;
         stats.parser_parse_t0 = Date.now();
         // acorn
-        ast = parser.parse(src, Object.assign({
-            ecmaVersion: 8,
+        ast = acorn.Parser.parse(src, Object.assign({
+            ecmaVersion: 11,
             allowImportExportEverywhere: true,
             allowReturnOutsideFunction: true,
             locations: true,
             ranges: true,
             onComment: comments,
-            plugins: options.dynamicImport ? { dynamicImport: true } : {}, // just having the key triggers plugin regardless of value
+            plugins: {}, // just having the key triggers plugin regardless of value
         }, options.acornOptions));
         stats.parser_parse_t1 = Date.now();
     } catch(e) {

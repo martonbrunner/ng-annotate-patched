@@ -1106,3 +1106,5 @@ exportVariableFunctionVar3.$inject = ["$scope"];
         };
     };
 })();
+
+import('dynamic-import-is-allowed.js').then(module => {});
